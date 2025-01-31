@@ -27,13 +27,17 @@
         .sign-output {
             margin-top: 20px;
             display: flex;
-            flex-wrap: wrap;
             justify-content: center;
+            font-size: 50px;
+            gap: 10px;
         }
-        .sign-output img {
-            width: 100px;
-            height: 100px;
-            margin: 5px;
+        .letter {
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
@@ -46,6 +50,15 @@
     </div>
     
     <script>
+        const signLanguageEmoji = {
+            a: "🤟", b: "🫵", c: "🤲", d: "☝️", e: "✋",
+            f: "👌", g: "🖖", h: "🤞", i: "☝", j: "✌️",
+            k: "🤞", l: "👍", m: "🖐️", n: "🤘", o: "👌",
+            p: "👆", q: "👇", r: "🤙", s: "✊", t: "👊",
+            u: "🤞", v: "✌️", w: "👐", x: "🤘", y: "🤙",
+            z: "✋"
+        };
+
         function startListening() {
             const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
             recognition.lang = 'en-US';
@@ -62,15 +75,27 @@
             const signOutput = document.getElementById("sign-output");
             signOutput.innerHTML = ""; 
             const words = text.toLowerCase().split(" ");
+            let delay = 0;
+
             words.forEach(word => {
                 [...word].forEach(letter => {
-                    const img = document.createElement("img");
-                    img.src = `https://www.signingsavvy.com/media/${letter}.jpg`; 
-                    img.alt = letter;
-                    signOutput.appendChild(img);
+                    if (signLanguageEmoji[letter]) {
+                        const span = document.createElement("span");
+                        span.innerText = signLanguageEmoji[letter];
+                        span.className = "letter";
+                        span.style.animationDelay = `${delay}s`;
+                        delay += 0.5; // Increment delay for each letter
+                        signOutput.appendChild(span);
+                    }
                 });
+
+                // Add space between words
+                if (word) {
+                    delay += 0.5; // Additional delay for space
+                }
             });
         }
     </script>
 </body>
 </html>
+
